@@ -1,11 +1,18 @@
 const express = require('express');
 const webpackDevMiddleware = require("webpack-dev-middleware");
 const webpackHotMiddleware = require("webpack-hot-middleware");
+const Redoid = require('redoid');
 const bodyParser = require('body-parser')
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+const redoid = Redoid({
+    color: '#300000',
+    loopTransition: true,
+    colorComponentPins: [17, 18, 4],
+});
 
 let colors = {
     r: 0,
@@ -51,6 +58,7 @@ app.get('/api/colors', function (req, res) {
 app.post('/api/colors', function (req, res) {
     if (req.body.colors !== undefined) {
         colors = req.body.colors;
+        redoid.transition([255 * colors.r, 255 * colors.g, 255 * colors.b], 10000);
     }
     res.send(colors);
 });
