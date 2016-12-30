@@ -1,7 +1,17 @@
-var express = require('express');
-var webpackDevMiddleware = require("webpack-dev-middleware");
-var webpackHotMiddleware = require("webpack-hot-middleware");
-var app = express();
+const express = require('express');
+const webpackDevMiddleware = require("webpack-dev-middleware");
+const webpackHotMiddleware = require("webpack-hot-middleware");
+const bodyParser = require('body-parser')
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+let colors = {
+    r: 0,
+    g: 0,
+    b: 0,
+};
 
 if (module.hot) {
     module.hot.accept();
@@ -10,9 +20,9 @@ if (module.hot) {
 (function() {
 
     // Step 1: Create & configure a webpack compiler
-    var webpack = require('webpack');
-    var webpackConfig = require(process.env.WEBPACK_CONFIG ? process.env.WEBPACK_CONFIG : '../webpack.config');
-    var compiler = webpack(webpackConfig);
+    const webpack = require('webpack');
+    const webpackConfig = require(process.env.WEBPACK_CONFIG ? process.env.WEBPACK_CONFIG : '../webpack.config');
+    const compiler = webpack(webpackConfig);
 
     // Step 2: Attach the dev middleware to the compiler & the server
     app.use(webpackDevMiddleware(compiler, {
@@ -26,11 +36,27 @@ if (module.hot) {
 })();
 
 app.get('/', function (req, res) {
-    res.sendFile('client/index.html', {"root": '.'});
+    res.sendFile('client/index.html', { root: '.' });
 });
 
 app.get('/static/bundle.js', function (req, res) {
-    res.sendFile('static/bundle.js', {"root": '.'});
+    res.sendFile('static/bundle.js', { root: '.' });
+});
+
+// API
+app.get('/api/colors', function (req, res) {
+    res.send(colors);
+});
+
+app.post('/api/colors', function (req, res) {
+    if (req.body.colors !== undefined) {
+        colors = req.body.colors;
+    }
+    res.send(colors);
+});
+
+app.get('*', function (req, res) {
+    res.redirect('/');
 });
 
 app.listen(3000, function () {
