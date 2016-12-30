@@ -15,10 +15,12 @@ const redoid = Redoid({
 });
 
 let colors = {
-    r: 0,
-    g: 0,
-    b: 0,
+    r: 1,
+    g: 1,
+    b: 1,
 };
+
+redoid.transition([255 * colors.r, 255 * colors.g, 255 * colors.b], 5000);
 
 if (module.hot) {
     module.hot.accept();
@@ -58,7 +60,7 @@ app.get('/api/colors', function (req, res) {
 app.post('/api/colors', function (req, res) {
     if (req.body.colors !== undefined) {
         colors = req.body.colors;
-        redoid.transition([255 * colors.r, 255 * colors.g, 255 * colors.b], 10000);
+        redoid.transition([255 * colors.r, 255 * colors.g, 255 * colors.b], 3000);
     }
     res.send(colors);
 });
